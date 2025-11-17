@@ -1,64 +1,84 @@
-// scripts.js - pequenos comportamentos: ano no rodapé + máscaras simples
+// scripts.js — comportamentos gerais: ano no rodapé + máscaras + validação
 
 
-// Máscara simples para CPF, Telefone e CEP (vanilla JS)
-function setInputFilter(elem, filter){
-elem.addEventListener('input', function(){
-if(filter(this.value)) this.oldValue = this.value; else this.value = this.oldValue || '';
-});
+/* ==========================================================
+   UTILIDADES
+   ========================================================== */
+
+// Remove qualquer caractere que não seja número
+function onlyDigits(value) {
+    return value.replace(/\D/g, '');
+}
+
+// Aplica máscara sempre que o input existir
+function applyMaskIfExists(inputId, maskFn) {
+    const field = document.getElementById(inputId);
+    if (!field) return;
+
+    field.addEventListener('input', function () {
+        const digits = onlyDigits(this.value);
+        this.value = maskFn(digits);
+    });
 }
 
 
-var cpf = document.getElementById('cpf');
-var tel = document.getElementById('telefone');
-var cep = document.getElementById('cep');
-
-
-function onlyDigits(v){ return v.replace(/\D/g,''); }
-
-
-if(cpf){
-cpf.addEventListener('input', function(){
-var v = onlyDigits(this.value).slice(0,11);
-v = v.replace(/(\d{3})(\d)/, '$1.$2');
-v = v.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-v = v.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
-this.value = v;
+/* ==========================================================
+   MÁSCARA CPF
+   ========================================================== */
+applyMaskIfExists('cpf', function (v) {
+    v = v.slice(0, 11);
+    return v
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 });
+
+
+/* ==========================================================
+   MÁSCARA TELEFONE (com 9 dígitos ou 8)
+   ========================================================== */
+applyMaskIfExists('telefone', function (v) {
+    v = v.slice(0, 11);
+    return v
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{2})\) (\d{5})(\d)/, '($1) $2-$3')
+        .replace(/(\d{2})\) (\d{4})(\d)/, '($1) $2-$3');
+});
+
+
+/* ==========================================================
+   MÁSCARA CEP
+   ========================================================== */
+applyMaskIfExists('cep', function (v) {
+    v = v.slice(0, 8);
+    return v.replace(/(\d{5})(\d)/, '$1-$2');
+});
+
+
+/* ==========================================================
+   VALIDAÇÃO DO FORMULÁRIO
+   ========================================================== */
+const form = document.getElementById('cadastroForm');
+
+if (form) {
+    form.addEventListener('submit', function (e) {
+
+        if (!form.checkValidity()) {
+            e.preventDefault(); // impede envio
+            form.reportValidity(); // deixa o navegador exibir mensagens
+            return;
+        }
+
+        e.preventDefault();
+        alert('Formulário válido! (Simulação). Integração com backend será feita depois.');
+    });
 }
 
 
-if(tel){
-tel.addEventListener('input', function(){
-var v = onlyDigits(this.value).slice(0,11);
-v = v.replace(/(\d{2})(\d)/, '($1) $2');
-v = v.replace(/(\d{2})\) (\d{5})(\d)/, '($1) $2-$3');
-v = v.replace(/(\d{2})\) (\d{4})(\d)/, '($1) $2-$3');
-this.value = v;
-});
+/* ==========================================================
+   ANO AUTOMÁTICO NO RODAPÉ
+   ========================================================== */
+const yearElem = document.getElementById('year');
+if (yearElem) {
+    yearElem.textContent = new Date().getFullYear();
 }
-
-
-if(cep){
-cep.addEventListener('input', function(){
-var v = onlyDigits(this.value).slice(0,8);
-v = v.replace(/(\d{5})(\d)/, '$1-$2');
-this.value = v;
-});
-}
-
-
-// Validação extra simples (mostrar mensagens nativas do browser)
-var form = document.getElementById('cadastroForm');
-if(form){
-form.addEventListener('submit', function(e){
-if(!form.checkValidity()){
-// permite que o navegador mostre mensagens de validação
-e.preventDefault();
-form.reportValidity();
-} else {
-e.preventDefault();
-alert('Formulário válido (simulação). Verifique envio para backend na próxima entrega.');
-}
-});
-};
