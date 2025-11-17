@@ -1,84 +1,39 @@
-// scripts.js — comportamentos gerais: ano no rodapé + máscaras + validação
+document.addEventListener('DOMContentLoaded', function () {
 
+    /* =========================
+       Menu Hambúrguer
+    ========================= */
 
-/* ==========================================================
-   UTILIDADES
-   ========================================================== */
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.querySelector('.mobile-menu');
 
-// Remove qualquer caractere que não seja número
-function onlyDigits(value) {
-    return value.replace(/\D/g, '');
-}
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function () {
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !expanded);
+            mobileMenu.style.display = expanded ? 'none' : 'block';
+        });
+    }
 
-// Aplica máscara sempre que o input existir
-function applyMaskIfExists(inputId, maskFn) {
-    const field = document.getElementById(inputId);
-    if (!field) return;
+    /* =========================
+       Dropdown (Desktop)
+    ========================= */
 
-    field.addEventListener('input', function () {
-        const digits = onlyDigits(this.value);
-        this.value = maskFn(digits);
+    document.querySelectorAll('.nav-item-dropdown').forEach(function(item){
+        const toggle = item.querySelector('.dropdown-toggle');
+        const menu = item.querySelector('.dropdown-menu');
+
+        if(!toggle || !menu) return;
+
+        // hover
+        item.addEventListener('mouseenter', () => menu.style.display = 'block');
+        item.addEventListener('mouseleave', () => menu.style.display = 'none');
+
+        // clique/acessibilidade
+        toggle.addEventListener('click', function(e){
+            e.preventDefault();
+            const visible = menu.style.display === 'block';
+            menu.style.display = visible ? 'none' : 'block';
+        });
     });
-}
-
-
-/* ==========================================================
-   MÁSCARA CPF
-   ========================================================== */
-applyMaskIfExists('cpf', function (v) {
-    v = v.slice(0, 11);
-    return v
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 });
-
-
-/* ==========================================================
-   MÁSCARA TELEFONE (com 9 dígitos ou 8)
-   ========================================================== */
-applyMaskIfExists('telefone', function (v) {
-    v = v.slice(0, 11);
-    return v
-        .replace(/(\d{2})(\d)/, '($1) $2')
-        .replace(/(\d{2})\) (\d{5})(\d)/, '($1) $2-$3')
-        .replace(/(\d{2})\) (\d{4})(\d)/, '($1) $2-$3');
-});
-
-
-/* ==========================================================
-   MÁSCARA CEP
-   ========================================================== */
-applyMaskIfExists('cep', function (v) {
-    v = v.slice(0, 8);
-    return v.replace(/(\d{5})(\d)/, '$1-$2');
-});
-
-
-/* ==========================================================
-   VALIDAÇÃO DO FORMULÁRIO
-   ========================================================== */
-const form = document.getElementById('cadastroForm');
-
-if (form) {
-    form.addEventListener('submit', function (e) {
-
-        if (!form.checkValidity()) {
-            e.preventDefault(); // impede envio
-            form.reportValidity(); // deixa o navegador exibir mensagens
-            return;
-        }
-
-        e.preventDefault();
-        alert('Formulário válido! (Simulação). Integração com backend será feita depois.');
-    });
-}
-
-
-/* ==========================================================
-   ANO AUTOMÁTICO NO RODAPÉ
-   ========================================================== */
-const yearElem = document.getElementById('year');
-if (yearElem) {
-    yearElem.textContent = new Date().getFullYear();
-}

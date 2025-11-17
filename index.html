@@ -13,18 +13,52 @@
 <body>
 
 <!-- ===================== HEADER / NAV ===================== -->
-<header class="header">
-    <div class="container nav-container">
-        <a href="index.html" class="logo">
-            <img src="assets/images/logo/logo-white.png" alt="Projeto Aliança">
-        </a>
+<header class="header" role="banner">
+  <div class="container nav-container">
+
+    <!-- logo -->
+    <a class="nav-logo" href="index.html">
+      <img src="assets/images/logo/logo.png" alt="Projeto Aliança">
+    </a>
+
+    <!-- botão hambúrguer (apenas mobile) -->
+    <button class="hamburger" aria-expanded="false" aria-label="Abrir menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- NAV DESKTOP -->
+    <nav class="main-nav" role="navigation" aria-label="Menu principal">
+      <ul class="nav-list">
+        <li><a href="index.html" class="">Início</a></li>
+
+        <!-- Exemplo com dropdown (submenus) -->
+        <li class="nav-item-dropdown">
+          <a href="projetos.html" class="dropdown-toggle">Projetos ▾</a>
+          <div class="dropdown-menu" role="menu" aria-hidden="true">
+            <a href="projetos.html#educacao" role="menuitem">Educação</a>
+            <a href="projetos.html#saude" role="menuitem">Saúde</a>
+            <a href="projetos.html#social" role="menuitem">Assistência Social</a>
+          </div>
+        </li>
+
+        <li><a href="cadastro.html" class="btn-nav">Cadastro</a></li>
+      </ul>
+    </nav>
+
+    <!-- NAV MOBILE (aparece ao abrir hamburger) -->
+    <div class="mobile-menu" aria-hidden="true">
+      <ul class="mobile-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="projetos.html">Projetos</a></li>
+        <li><a href="cadastro.html">Cadastro</a></li>
+      </ul>
     </div>
-    <div class="navbar">
-        <a href="index.html" class="">Início</a>
-        <a href="projetos.html" class="">Projetos</a>
-        <a href="cadastro.html" class="">Cadastro</a>
-    </div>
+
+  </div>
 </header>
+<!-- ========== /HEADER PADRÃO ========== -->
 
 <!-- ===================== CONTEÚDO PRINCIPAL ===================== -->
 <main id="main">
